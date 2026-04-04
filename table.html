@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, initial-scale=1">
+    <title>SenSim - Table Projection</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="table-style.css">
+</head>
+<body>
+
+    <!-- ========== LOADING OVERLAY ========== -->
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <h2>Loading Hand Tracking...</h2>
+            <div class="loading-bar">
+                <div class="loading-fill" id="loading-fill"></div>
+            </div>
+            <p id="loading-status">Initializing MediaPipe...</p>
+        </div>
+    </div>
+
+    <!-- ========== SCENE SELECTOR ========== -->
+    <div id="scene-select" class="screen-layer starfield">
+        <div class="scene-select-inner">
+            <h1 class="select-title">SenSim</h1>
+            <p class="select-subtitle">Choose a sensory environment to explore</p>
+            <div class="scene-cards" id="scene-cards">
+                <!-- Filled by JS from CONFIG -->
+            </div>
+            <p class="select-hint">Touch a card to select</p>
+        </div>
+    </div>
+
+    <!-- ========== TOOL SCREEN ========== -->
+    <div id="tool-screen" class="screen-layer hidden">
+        <!-- Header -->
+        <div class="tool-header">
+            <h2 id="tool-scene-label"></h2>
+            <p class="tool-scene-desc" id="tool-scene-desc"></p>
+        </div>
+
+        <!-- Start button (before chaos begins) -->
+        <div id="start-prompt" class="start-prompt">
+            <button class="btn-primary" id="start-btn">TAP TO START</button>
+        </div>
+
+        <!-- Tool grid (2x2) -->
+        <div class="tool-grid" id="tool-grid">
+            <!-- Filled by JS -->
+        </div>
+
+        <!-- Progress -->
+        <div class="tool-progress" id="tool-progress">
+            <div class="tp-label">TOOLS EXPLORED</div>
+            <div class="tp-track">
+                <div class="tp-fill" id="tp-fill"></div>
+            </div>
+            <div class="tp-count" id="tp-count">0 / 4</div>
+        </div>
+    </div>
+
+    <!-- ========== SUMMARY SCREEN ========== -->
+    <div id="table-summary" class="screen-layer hidden">
+        <div class="table-summary-inner">
+            <h1>All Tools Explored!</h1>
+            <p class="ts-subtitle" id="ts-subtitle">You discovered all coping strategies for this environment.</p>
+            <div class="ts-tools" id="ts-tools"></div>
+            <div class="ts-actions">
+                <button class="btn-primary" id="btn-another">TRY ANOTHER SCENE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== HAND CURSOR ========== -->
+    <div id="hand-cursor" class="hidden">
+        <svg viewBox="0 0 40 40" width="40" height="40">
+            <circle cx="20" cy="20" r="16" fill="rgba(78, 205, 196, 0.3)" stroke="var(--teal)" stroke-width="3"/>
+            <circle cx="20" cy="20" r="5" fill="var(--teal)"/>
+        </svg>
+    </div>
+
+    <!-- ========== DWELL PROGRESS RING ========== -->
+    <svg id="dwell-ring" class="hidden" viewBox="0 0 120 120" width="120" height="120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+        <circle id="dwell-progress" cx="60" cy="60" r="54" fill="none" stroke="var(--teal)" stroke-width="6"
+                stroke-dasharray="339.292" stroke-dashoffset="339.292"
+                stroke-linecap="round" transform="rotate(-90 60 60)"/>
+    </svg>
+
+    <!-- ========== CALIBRATION OVERLAY ========== -->
+    <div id="calibration-overlay" class="hidden">
+        <div class="cal-content">
+            <h2>Calibration Mode</h2>
+            <p id="cal-instruction">Click the <strong>TOP-LEFT</strong> corner of the projected area</p>
+            <div class="cal-corners">
+                <div class="cal-corner tl" data-corner="0">TL</div>
+                <div class="cal-corner tr" data-corner="1">TR</div>
+                <div class="cal-corner br" data-corner="2">BR</div>
+                <div class="cal-corner bl" data-corner="3">BL</div>
+            </div>
+            <p class="cal-hint">Press [C] to cancel | Press [ESC] to exit</p>
+        </div>
+    </div>
+
+    <!-- ========== DEBUG OVERLAY ========== -->
+    <div id="debug-overlay" class="hidden">
+        <video id="debug-video" autoplay playsinline muted></video>
+        <canvas id="debug-canvas"></canvas>
+        <div class="debug-info" id="debug-info">
+            <span id="debug-fps">FPS: --</span>
+            <span id="debug-hands">Hands: 0</span>
+            <span id="debug-pos">Pos: --, --</span>
+        </div>
+    </div>
+
+    <!-- ========== KEYBOARD HELP ========== -->
+    <div id="kb-help" class="hidden">
+        <div class="kb-help-inner">
+            <h3>Keyboard Shortcuts</h3>
+            <div class="kb-row"><span class="kb-key">C</span> Calibrate</div>
+            <div class="kb-row"><span class="kb-key">M</span> Mirror toggle</div>
+            <div class="kb-row"><span class="kb-key">D</span> Debug view</div>
+            <div class="kb-row"><span class="kb-key">R</span> Reset / new scene</div>
+            <div class="kb-row"><span class="kb-key">1-3</span> Quick scene select</div>
+            <div class="kb-row"><span class="kb-key">H</span> Toggle this help</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="shared.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.min.js"></script>
+    <script src="table-script.js"></script>
+</body>
+</html>

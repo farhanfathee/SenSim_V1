@@ -1,0 +1,173 @@
+/* =========================================================
+   SenSim - Shared Theme & Reset
+   Matches Focus Frenzy visual language
+   ========================================================= */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #12122a;
+    --bg-alt: #151535;
+    --bg-dark: #0d0d20;
+    --teal: #4ecdc4;
+    --teal-dark: #00d2d3;
+    --teal-light: rgba(78, 205, 196, 0.15);
+    --teal-bg: rgba(78, 205, 196, 0.08);
+    --orange: #F5A623;
+    --orange-light: rgba(245, 166, 35, 0.15);
+    --purple: #9b85c8;
+    --purple-dark: #7b68ae;
+    --purple-light: rgba(155, 133, 200, 0.15);
+    --pink: #e84393;
+    --pink-light: rgba(232, 67, 147, 0.15);
+    --text-dark: #e8e8f0;
+    --text-mid: #a0a0c0;
+    --text-light: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --surface: rgba(255, 255, 255, 0.05);
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.5);
+    --success: #66bb6a;
+    --success-light: rgba(102, 187, 106, 0.15);
+    --danger: #ef5350;
+    --glow-teal: 0 0 20px rgba(78, 205, 196, 0.4);
+    --glow-purple: 0 0 20px rgba(155, 133, 200, 0.4);
+    --glow-orange: 0 0 20px rgba(245, 166, 35, 0.4);
+    --glow-pink: 0 0 20px rgba(232, 67, 147, 0.4);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 24px;
+}
+
+html, body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+/* ===== SHARED ANIMATIONS ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(78, 205, 196, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(78, 205, 196, 0.6); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+@keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes starTwinkle {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.fade-in { animation: fadeIn 0.5s ease; }
+.fade-in-up { animation: fadeInUp 0.5s ease; }
+.fade-in-scale { animation: fadeInScale 0.5s ease; }
+
+/* ===== GLASS MORPHISM UTILITY ===== */
+.glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px var(--shadow);
+}
+
+/* ===== BUTTON STYLE ===== */
+.btn-primary {
+    padding: 20px 60px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 24px rgba(0, 210, 211, 0.3), var(--glow-teal);
+    font-family: inherit;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 210, 211, 0.5), 0 0 30px rgba(78, 205, 196, 0.5);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ===== STAR FIELD BACKGROUND ===== */
+.starfield::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 50%, transparent 50%),
+        radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.7) 50%, transparent 50%),
+        radial-gradient(1px 1px at 55% 75%, rgba(255,255,255,0.5) 50%, transparent 50%),
+        radial-gradient(1px 1px at 65% 30%, rgba(255,255,255,0.4) 50%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 75% 60%, rgba(255,255,255,0.6) 50%, transparent 50%),
+        radial-gradient(1px 1px at 85% 45%, rgba(255,255,255,0.3) 50%, transparent 50%),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.5) 50%, transparent 50%),
+        radial-gradient(1px 1px at 5% 55%, rgba(78,205,196,0.4) 50%, transparent 50%),
+        radial-gradient(1px 1px at 50% 90%, rgba(155,133,200,0.3) 50%, transparent 50%);
+    pointer-events: none;
+    animation: starTwinkle 4s ease-in-out infinite alternate;
+}
+
+/* ===== HIDDEN ===== */
+.hidden { display: none !important; }

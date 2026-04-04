@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, initial-scale=1">
+    <title>SenSim - TV Display</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="tv-style.css">
+</head>
+<body>
+
+    <!-- ========== CLICK TO BEGIN OVERLAY ========== -->
+    <div id="click-overlay">
+        <div class="click-overlay-content">
+            <h1>SenSim</h1>
+            <p class="subtitle">Sensory Coping Experience</p>
+            <p class="click-prompt">Click anywhere to begin</p>
+            <div class="pulse-ring"></div>
+        </div>
+    </div>
+
+    <!-- ========== WAITING / TITLE SCREEN ========== -->
+    <div id="waiting-screen" class="screen-layer hidden">
+        <div class="waiting-content starfield">
+            <h1 class="title-glow">SenSim</h1>
+            <p class="waiting-subtitle">Waiting for scene selection...</p>
+            <div class="waiting-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SCENE CONTAINER ========== -->
+    <div id="scene-container" class="screen-layer hidden">
+
+        <!-- OFFICE SCENE -->
+        <div id="scene-office" class="scene" data-scene="office">
+            <!-- Ceiling -->
+            <div class="office-ceiling">
+                <div class="fluorescent-bar bar-1"></div>
+                <div class="fluorescent-bar bar-2"></div>
+                <div class="fluorescent-bar bar-3"></div>
+            </div>
+            <!-- Back wall -->
+            <div class="office-wall">
+                <div class="office-window">
+                    <div class="window-blind"></div>
+                </div>
+                <div class="office-clock">
+                    <div class="clock-hand"></div>
+                </div>
+                <div class="office-whiteboard"></div>
+            </div>
+            <!-- Desk area -->
+            <div class="office-desk-area">
+                <div class="desk desk-1">
+                    <div class="monitor">
+                        <div class="monitor-screen"></div>
+                    </div>
+                    <div class="keyboard"></div>
+                    <div class="coffee-cup"></div>
+                </div>
+                <div class="desk desk-2">
+                    <div class="monitor">
+                        <div class="monitor-screen"></div>
+                    </div>
+                    <div class="phone ringing"></div>
+                    <div class="papers"></div>
+                </div>
+            </div>
+            <!-- Printer -->
+            <div class="office-printer">
+                <div class="printer-body"></div>
+                <div class="printer-paper"></div>
+            </div>
+            <!-- People silhouettes -->
+            <div class="person person-1"></div>
+            <div class="person person-2"></div>
+            <div class="person person-3"></div>
+            <!-- Chaos overlays -->
+            <div class="chaos-overlay flicker-overlay"></div>
+            <div class="chaos-overlay noise-lines"></div>
+        </div>
+
+        <!-- MALL SCENE -->
+        <div id="scene-mall" class="scene" data-scene="mall">
+            <!-- Ceiling / structure -->
+            <div class="mall-ceiling">
+                <div class="mall-beam beam-1"></div>
+                <div class="mall-beam beam-2"></div>
+                <div class="mall-light ml-1"></div>
+                <div class="mall-light ml-2"></div>
+                <div class="mall-light ml-3"></div>
+            </div>
+            <!-- Storefronts -->
+            <div class="mall-stores">
+                <div class="storefront store-1">
+                    <div class="store-window"></div>
+                    <div class="neon-sign neon-1">SALE</div>
+                </div>
+                <div class="storefront store-2">
+                    <div class="store-window"></div>
+                    <div class="neon-sign neon-2">OPEN</div>
+                </div>
+                <div class="storefront store-3">
+                    <div class="store-window"></div>
+                    <div class="neon-sign neon-3">NEW</div>
+                </div>
+            </div>
+            <!-- PA Speaker -->
+            <div class="pa-speaker">
+                <div class="speaker-cone"></div>
+                <div class="sound-wave sw-1"></div>
+                <div class="sound-wave sw-2"></div>
+                <div class="sound-wave sw-3"></div>
+            </div>
+            <!-- Floor -->
+            <div class="mall-floor">
+                <div class="floor-tile"></div>
+            </div>
+            <!-- Crowd -->
+            <div class="crowd">
+                <div class="crowd-person cp-1"></div>
+                <div class="crowd-person cp-2"></div>
+                <div class="crowd-person cp-3"></div>
+                <div class="crowd-person cp-4"></div>
+                <div class="crowd-person cp-5"></div>
+                <div class="crowd-person cp-6"></div>
+            </div>
+            <!-- Chaos overlays -->
+            <div class="chaos-overlay flicker-overlay"></div>
+            <div class="chaos-overlay noise-lines"></div>
+        </div>
+
+        <!-- SCHOOL SCENE -->
+        <div id="scene-school" class="scene" data-scene="school">
+            <!-- Ceiling -->
+            <div class="school-ceiling">
+                <div class="fluorescent-tube tube-1"></div>
+                <div class="fluorescent-tube tube-2"></div>
+            </div>
+            <!-- Hallway walls -->
+            <div class="hallway">
+                <div class="locker-row left-lockers">
+                    <div class="locker l1"></div>
+                    <div class="locker l2"></div>
+                    <div class="locker l3"></div>
+                    <div class="locker l4"></div>
+                    <div class="locker l5"></div>
+                </div>
+                <div class="locker-row right-lockers">
+                    <div class="locker l6"></div>
+                    <div class="locker l7"></div>
+                    <div class="locker l8"></div>
+                    <div class="locker l9"></div>
+                    <div class="locker l10"></div>
+                </div>
+            </div>
+            <!-- Clock -->
+            <div class="school-clock">
+                <div class="clock-face">
+                    <div class="clock-hand-hr"></div>
+                    <div class="clock-hand-min"></div>
+                </div>
+            </div>
+            <!-- Bell -->
+            <div class="school-bell">
+                <div class="bell-body"></div>
+                <div class="bell-clapper"></div>
+                <div class="bell-wave bw-1"></div>
+                <div class="bell-wave bw-2"></div>
+            </div>
+            <!-- Door -->
+            <div class="classroom-door">
+                <div class="door-window"></div>
+                <div class="door-handle"></div>
+            </div>
+            <!-- Students -->
+            <div class="student student-1"></div>
+            <div class="student student-2"></div>
+            <div class="student student-3"></div>
+            <div class="student student-4"></div>
+            <!-- Chaos overlays -->
+            <div class="chaos-overlay flicker-overlay"></div>
+            <div class="chaos-overlay noise-lines"></div>
+        </div>
+    </div>
+
+    <!-- ========== SCENE LABEL ========== -->
+    <div id="scene-label" class="hidden">
+        <span id="scene-label-text"></span>
+    </div>
+
+    <!-- ========== CALM INDICATOR ========== -->
+    <div id="calm-meter" class="hidden">
+        <div class="calm-label">CALM LEVEL</div>
+        <div class="calm-bar-track">
+            <div class="calm-bar-fill" id="calm-fill"></div>
+        </div>
+        <div class="calm-pct" id="calm-pct">0%</div>
+    </div>
+
+    <!-- ========== TOOL INFO POPUP ========== -->
+    <div id="tool-info" class="hidden">
+        <div class="tool-info-icon" id="tool-info-icon"></div>
+        <div class="tool-info-name" id="tool-info-name"></div>
+        <div class="tool-info-desc" id="tool-info-desc"></div>
+    </div>
+
+    <!-- ========== SUMMARY OVERLAY ========== -->
+    <div id="summary-overlay" class="screen-layer hidden">
+        <div class="summary-content">
+            <h1>Well Done!</h1>
+            <p class="summary-subtitle">You explored all the coping tools for this environment.</p>
+            <div id="summary-tools" class="summary-tools"></div>
+            <div class="summary-message">
+                <p>Everyone experiences sensory input differently.</p>
+                <p>These tools help create a comfortable environment for people with sensory sensitivities.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script src="tv-script.js"></script>
+</body>
+</html>
