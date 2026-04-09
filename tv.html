@@ -9,24 +9,53 @@
 </head>
 <body>
 
-    <!-- ========== CLICK TO BEGIN OVERLAY ========== -->
+    <!-- ========== START SCREEN OVERLAY ========== -->
     <div id="click-overlay">
+        <!-- Background elements -->
+        <div class="bg-wave wave-left"></div>
+        <div class="bg-wave wave-right"></div>
+
+        <!-- Decorative elements -->
+        <img src="Assets/lantern.png" class="lantern" alt="">
+        <img src="Assets/star-pink1.png" class="star star-1" alt="">
+        <img src="Assets/star-purple.png" class="star star-2" alt="">
+        <img src="Assets/stars-blue1.png" class="star star-3" alt="">
+        <img src="Assets/stars-blue2.png" class="star star-4" alt="">
+        <img src="Assets/comet-purple.png" class="comet comet-1" alt="">
+        <img src="Assets/comet-purple.png" class="comet comet-2" alt="">
+        <img src="Assets/leaf-green1.png" class="leaf leaf-1" alt="">
+        <img src="Assets/leaf-green2.png" class="leaf leaf-2" alt="">
+        <img src="Assets/leaf-green1.png" class="leaf leaf-3" alt="">
+        <img src="Assets/leaf-green2.png" class="leaf leaf-4" alt="">
+        <img src="Assets/bubble-blue.png" class="bubble bubble-1" alt="">
+        <img src="Assets/bubble-purple.png" class="bubble bubble-2" alt="">
+        <img src="Assets/bubble-blue.png" class="bubble bubble-3" alt="">
+        <img src="Assets/bubble-purple.png" class="bubble bubble-4" alt="">
+
+        <!-- Characters -->
+        <img src="Assets/monster-green.png" class="character char-green" alt="">
+        <img src="Assets/monster-pink.png" class="character char-pink" alt="">
+        <img src="Assets/monster-orange.png" class="character char-orange" alt="">
+        <img src="Assets/worm.png" class="worm" alt="">
+
+        <!-- Main content -->
         <div class="click-overlay-content">
-            <h1>SenSim</h1>
-            <p class="subtitle">Sensory Coping Experience</p>
-            <p class="click-prompt">Click anywhere to begin</p>
-            <div class="pulse-ring"></div>
+            <img src="Assets/sensim-title.png" class="title-image" alt="SenSim">
+            <p class="subtitle">Sensoring Coping Experience</p>
+            <div class="start-btn-wrapper">
+                <div class="btn-glow"></div>
+                <button class="start-btn" id="start-btn">TAP TO START</button>
+            </div>
         </div>
     </div>
 
-    <!-- ========== WAITING / TITLE SCREEN ========== -->
-    <div id="waiting-screen" class="screen-layer hidden">
-        <div class="waiting-content starfield">
-            <h1 class="title-glow">SenSim</h1>
-            <p class="waiting-subtitle">Waiting for scene selection...</p>
-            <div class="waiting-dots">
-                <span></span><span></span><span></span>
-            </div>
+    <!-- ========== SCENE TRANSITION OVERLAY ========== -->
+    <div id="scene-intro-overlay" class="screen-layer hidden">
+        <div class="scene-intro-content">
+            <div class="scene-intro-icon" id="scene-intro-icon"></div>
+            <h2 id="scene-intro-title"></h2>
+            <p id="scene-intro-desc"></p>
+            <div class="scene-intro-count" id="scene-intro-count"></div>
         </div>
     </div>
 
