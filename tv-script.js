@@ -1,12 +1,21 @@
 /* =========================================================
    SenSim - TV Screen Script
-   AudioEngine, scene management, BroadcastChannel listener
+   Standalone autoplay mode: cycles through all scenes
    ========================================================= */
+
+// ===== AUTOPLAY CONFIG =====
+const AUTOPLAY = {
+    SCENE_CHAOS_DURATION: 8000,   // ms of pure chaos before tools start
+    TOOL_INTERVAL: 4000,          // ms between each tool activation
+    POST_CALM_PAUSE: 4000,        // ms after all tools before next scene
+    SCENE_INTRO_DURATION: 3000,   // ms to show scene intro card
+};
 
 // ===== STATE =====
 const gsm = new GameStateMachine(onPhaseChange);
 let channel = null;
 let audioEngine = null;
+let autoplayTimers = [];
 
 // ===== DOM =====
 const DOM = {};
@@ -313,7 +322,7 @@ class AudioEngine {
 function onPhaseChange(newPhase, prevPhase, data) {
     switch (newPhase) {
         case PHASE.SCENE_SELECT:
-            showWaiting();
+            // Not used in autoplay mode
             break;
         case PHASE.OVERLOAD:
             showScene(data.sceneId);
@@ -329,18 +338,12 @@ function onPhaseChange(newPhase, prevPhase, data) {
 
 // ===== SCREEN MANAGEMENT =====
 function hideAllScreens() {
-    DOM.waitingScreen.classList.add('hidden');
+    DOM.sceneIntroOverlay.classList.add('hidden');
     DOM.sceneContainer.classList.add('hidden');
     DOM.summaryOverlay.classList.add('hidden');
     DOM.sceneLabel.classList.add('hidden');
     DOM.calmMeter.classList.add('hidden');
     DOM.toolInfo.classList.add('hidden');
-}
-
-function showWaiting() {
-    hideAllScreens();
-    DOM.waitingScreen.classList.remove('hidden');
-    if (audioEngine) audioEngine.stopAll();
 }
 
 function showScene(sceneId) {
@@ -423,40 +426,6 @@ function onToolActivated(toolId) {
     updateCalmMeter();
 }
 
-function onToolDeactivated(toolId) {
-    const sd = gsm.sceneData;
-    if (!sd) return;
-
-    const tool = sd.tools.find(t => t.id === toolId);
-    if (!tool) return;
-
-    gsm.deactivateTool(toolId);
-
-    // Check if any other active tool has same calmType
-    const stillActive = [...gsm.activeTools].some(tid => {
-        const t = sd.tools.find(x => x.id === tid);
-        return t && t.calmType === tool.calmType;
-    });
-
-    if (!stillActive) {
-        const sceneEl = document.getElementById('scene-' + gsm.scene);
-        if (sceneEl) {
-            sceneEl.classList.remove('calm-' + tool.calmType);
-        }
-
-        if (audioEngine) {
-            if (tool.calmType === 'overall') {
-                audioEngine.restoreAll();
-            } else {
-                audioEngine.restoreLayer(tool.calmTargets);
-            }
-        }
-    }
-
-    // Hide tool info
-    DOM.toolInfo.classList.add('hidden');
-}
-
 function showToolInfo(tool) {
     DOM.toolInfoIcon.innerHTML = tool.svgIcon;
     DOM.toolInfoName.textContent = tool.name;
@@ -468,14 +437,13 @@ function showToolInfo(tool) {
 function showSummary() {
     if (audioEngine) audioEngine.stopAll();
 
-    const sd = gsm.sceneData;
-    DOM.toolInfo.classList.add('hidden');
+    hideAllScreens();
 
-    // Build summary tool cards
+    // Build summary with ALL tools from ALL scenes
     const container = DOM.summaryTools;
     container.innerHTML = '';
-    if (sd) {
-        for (const tool of sd.tools) {
+    for (const scene of CONFIG.SCENES) {
+        for (const tool of scene.tools) {
             const card = document.createElement('div');
             card.className = 'summary-tool-card';
             card.innerHTML = `
@@ -490,29 +458,117 @@ function showSummary() {
     DOM.summaryOverlay.classList.remove('hidden');
 }
 
-// ===== BROADCAST CHANNEL HANDLER =====
+// ===== SCENE INTRO CARD =====
+function showSceneIntro(sceneData, sceneIndex) {
+    return new Promise(resolve => {
+        hideAllScreens();
+
+        DOM.sceneIntroTitle.textContent = sceneData.label;
+        DOM.sceneIntroTitle.style.color = sceneData.color;
+        DOM.sceneIntroDesc.textContent = sceneData.description;
+        DOM.sceneIntroCount.textContent = `0/${sceneData.tools.length}`;
+
+        // Populate tools grid
+        DOM.sceneIntroTools.innerHTML = '';
+        for (const tool of sceneData.tools) {
+            const card = document.createElement('div');
+            card.className = 'scene-tool-card';
+            card.innerHTML = `
+                <div class="tool-icon">${tool.svgIcon}</div>
+                <div class="tool-name">${tool.name}</div>
+                <div class="tool-type">${tool.calmType}</div>
+            `;
+            DOM.sceneIntroTools.appendChild(card);
+        }
+
+        DOM.sceneIntroOverlay.classList.remove('hidden');
+
+        const t = setTimeout(() => {
+            DOM.sceneIntroOverlay.classList.add('hidden');
+            resolve();
+        }, AUTOPLAY.SCENE_INTRO_DURATION);
+        autoplayTimers.push(t);
+    });
+}
+
+// ===== AUTOPLAY ENGINE =====
+function clearAutoplayTimers() {
+    for (const t of autoplayTimers) {
+        clearTimeout(t);
+    }
+    autoplayTimers = [];
+}
+
+async function startAutoplay() {
+    clearAutoplayTimers();
+
+    for (let i = 0; i < CONFIG.SCENES.length; i++) {
+        const scene = CONFIG.SCENES[i];
+
+        // Show scene intro card
+        await showSceneIntro(scene, i);
+
+        // Broadcast scene selection to table
+        channel.send(MSG.SCENE_SELECTED, { sceneId: scene.id });
+
+        // Select and show the scene
+        gsm._scene = scene.id;
+        gsm._activeTools.clear();
+        gsm._exploredTools.clear();
+        gsm.transition(PHASE.OVERLOAD, { sceneId: scene.id });
+
+        // Wait a beat, then start chaos (audio)
+        await delay(800);
+        channel.send(MSG.START);
+        gsm.transition(PHASE.TOOL_ACTIVE);
+
+        // Let the chaos run for a while
+        await delay(AUTOPLAY.SCENE_CHAOS_DURATION);
+
+        // Auto-activate tools one by one
+        for (const tool of scene.tools) {
+            channel.send(MSG.TOOL_ACTIVATED, { toolId: tool.id });
+            onToolActivated(tool.id);
+            await delay(AUTOPLAY.TOOL_INTERVAL);
+        }
+
+        // Pause to let the calm sink in
+        await delay(AUTOPLAY.POST_CALM_PAUSE);
+
+        // Stop audio before next scene
+        if (audioEngine) audioEngine.stopAll();
+    }
+
+    // All scenes done — show summary
+    channel.send(MSG.ALL_COMPLETE);
+    gsm.transition(PHASE.SUMMARY);
+}
+
+function delay(ms) {
+    return new Promise(resolve => {
+        const t = setTimeout(resolve, ms);
+        autoplayTimers.push(t);
+    });
+}
+
+// ===== BROADCAST CHANNEL HANDLER (still supported for table sync) =====
 function handleMessage(data) {
     switch (data.type) {
         case MSG.SCENE_SELECTED:
             gsm.selectScene(data.sceneId);
             break;
-
         case MSG.START:
             gsm.startScene();
             break;
-
         case MSG.TOOL_ACTIVATED:
             onToolActivated(data.toolId);
             break;
-
         case MSG.TOOL_DEACTIVATED:
-            onToolDeactivated(data.toolId);
+            // Not needed in autoplay but keep for table sync
             break;
-
         case MSG.ALL_COMPLETE:
             gsm.complete();
             break;
-
         case MSG.RESET:
             gsm.reset();
             break;
@@ -522,7 +578,13 @@ function handleMessage(data) {
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
     DOM.clickOverlay = document.getElementById('click-overlay');
-    DOM.waitingScreen = document.getElementById('waiting-screen');
+    DOM.startBtn = document.getElementById('start-btn');
+    DOM.sceneIntroOverlay = document.getElementById('scene-intro-overlay');
+    DOM.sceneIntroIcon = document.getElementById('scene-intro-icon');
+    DOM.sceneIntroTitle = document.getElementById('scene-intro-title');
+    DOM.sceneIntroDesc = document.getElementById('scene-intro-desc');
+    DOM.sceneIntroCount = document.getElementById('scene-intro-count');
+    DOM.sceneIntroTools = document.getElementById('scene-intro-tools');
     DOM.sceneContainer = document.getElementById('scene-container');
     DOM.sceneLabel = document.getElementById('scene-label');
     DOM.sceneLabelText = document.getElementById('scene-label-text');
@@ -540,18 +602,18 @@ window.addEventListener('DOMContentLoaded', () => {
     scaleToFit();
     window.addEventListener('resize', scaleToFit);
 
-    // Click overlay: init audio context on first click
-    DOM.clickOverlay.addEventListener('click', () => {
+    // Start button: init audio context and begin autoplay
+    DOM.startBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         getAudioCtx(); // ensure audio is initialized
         DOM.clickOverlay.classList.add('hiding');
         setTimeout(() => {
             DOM.clickOverlay.classList.add('hidden');
-            // Show waiting screen
-            gsm.transition(PHASE.SCENE_SELECT);
+            startAutoplay();
         }, 600);
     });
 
-    // Connect BroadcastChannel
+    // Connect BroadcastChannel (still works if table is open)
     channel = new SenSimChannel(handleMessage);
     channel.send(MSG.READY, { screen: 'tv' });
 });
